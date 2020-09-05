@@ -23,13 +23,19 @@ class Todo {
 
   createItem(todo) {
     const li = document.createElement('li');
+    let todoEdit = '';
     li.classList.add('todo-item');
     li.key = todo.key;
     li.dataset.key = todo.key; // атрибут data-key в элемент li с значением ключа
     console.log(todo.key);
+    
+    if (todo.completed) {
+      todoEdit = `<button class="todo-edit"></button>`;
+    }
     li.insertAdjacentHTML('beforeend', `
       <span class="text-todo">${todo.value}</span>
       <div class="todo-buttons">
+        ${todoEdit}
         <button class="todo-remove"></button>
         <button class="todo-complete"></button>
       </div>
@@ -69,6 +75,16 @@ class Todo {
     this.render();
   }
 
+  editItem(targetKey) {
+    this.todoData.forEach((value, key) => {
+      if (targetKey === key){
+        
+        
+      }
+      // console.log(targetKey);
+    });
+  }
+
   completedItem(targetKey) {
     this.todoData.forEach((value, key) => {
       if (targetKey === key && value.completed === false) {
@@ -92,6 +108,20 @@ class Todo {
       } else if (target.matches('.todo-remove')) {
         target.key = target.closest('.todo-item').key;
         this.deleteItem(target.key);
+      } else if (target.matches('.todo-edit')){
+        target.key = target.closest('.todo-item').key;
+        let textEdit = target.closest('.todo-item');
+        textEdit.setAttribute('contenteditable', true);
+        textEdit.focus();
+        if (textEdit.getAttribute('contenteditable')){
+        textEdit.addEventListener('click', (evet) =>{
+          let text = event.target.closest('.todo-item').textContent;
+          textEdit.setAttribute('contenteditable', false);
+          textEdit.blur();
+        this.editItem(target.key, text);
+        
+        });
+      }
       }
     });
 
