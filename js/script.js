@@ -27,15 +27,14 @@ class Todo {
     li.classList.add('todo-item');
     li.key = todo.key;
     li.dataset.key = todo.key; // атрибут data-key в элемент li с значением ключа
-    console.log(todo.key);
-    
-    if (todo.completed) {
-      todoEdit = `<button class="todo-edit"></button>`;
-    }
+    // console.log(todo.key);
+
+
+
     li.insertAdjacentHTML('beforeend', `
       <span class="text-todo">${todo.value}</span>
       <div class="todo-buttons">
-        ${todoEdit}
+        <button class="todo-edit"></button>
         <button class="todo-remove"></button>
         <button class="todo-complete"></button>
       </div>
@@ -75,14 +74,18 @@ class Todo {
     this.render();
   }
 
-  editItem(targetKey) {
-    this.todoData.forEach((value, key) => {
-      if (targetKey === key){
-        
-        
+  editItem(targetKey, text) {
+    this.todoData.forEach((data, key) => {
+      if (targetKey === key) {
+
+        // console.log(data.value, text);
+        console.log(data);
+        data.value = text.trim();
+
       }
       // console.log(targetKey);
     });
+    this.render();
   }
 
   completedItem(targetKey) {
@@ -108,25 +111,29 @@ class Todo {
       } else if (target.matches('.todo-remove')) {
         target.key = target.closest('.todo-item').key;
         this.deleteItem(target.key);
-      } else if (target.matches('.todo-edit')){
+      } else if (target.matches('.todo-edit')) {
         target.key = target.closest('.todo-item').key;
         let textEdit = target.closest('.todo-item');
-        textEdit.setAttribute('contenteditable', true);
-        textEdit.focus();
-        if (textEdit.getAttribute('contenteditable')){
-        textEdit.addEventListener('click', (evet) =>{
-          let text = event.target.closest('.todo-item').textContent;
-          textEdit.setAttribute('contenteditable', false);
-          textEdit.blur();
-        this.editItem(target.key, text);
-        
-        });
-      }
+        let textSpan = textEdit.querySelector('.text-todo');
+
+        textSpan.setAttribute('contenteditable', true);
+        console.log(textSpan.textContent.length);
+        textSpan.focus();
+        if (textSpan.getAttribute('contenteditable')) {
+          textEdit.addEventListener('dblclick', (evet) => {
+            let text = '';
+            text = event.target.closest('.todo-item').textContent;
+            textSpan.setAttribute('contenteditable', false);
+            textSpan.blur();
+            this.editItem(target.key, text);
+
+          });
+        }
       }
     });
 
   }
- 
+
   init() {
     this.form.addEventListener('submit', this.addTodo.bind(this));
     this.render();
